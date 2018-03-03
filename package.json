@@ -1,0 +1,15 @@
+{
+    "name": "full-stack-app",
+    "description": "A full-stack application using express, and mysql",
+    "author": "Michael Fryer",
+    "version": "0.0.0",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/HumbleHominid/full-stack-app"
+    },
+    "dependencies": {
+        "express": "^4.16.2",
+        "mysql": "^2.15.0"
+    }
+}
