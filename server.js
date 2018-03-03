@@ -6,14 +6,13 @@ const path = require('path');
 //------------------------
 //- Node Module Requires -
 //------------------------
-const mysql = require('mysql');
 const express = require('express');
 
 //------------------
 //- Local Requires -
 //------------------
-const credentials = require('./mysql/credentials');
-const queries = require('./mysql/queries');
+// express route stuff
+const grades = require('./routes/grades');
 
 //--------------------
 //- Script Constants -
@@ -30,75 +29,24 @@ app.listen(port, () => {
     console.log(`Listening at "${hostname}://${port}"`);
 });
 
-//--------------------
-//- App Static Files -
-//--------------------
+//------------
+//- App Uses -
+//------------
+// Static Files
 app.use(express.static(static_path, { dotfiles: 'ignore' }));
+// Grades
+app.use(grades);
 
 //-----------------
 //- Set up Routes -
 //-----------------
-// Bad request
-function badRequest(req, res) {
-    res.status(400).send('Bad Request');
-}
-
-// Define the '/grades/:id' route
-app.route('/grades/:id')
-// Define get requests for the route
-.get((req, res) => {
-    let con = mysql.createConnection(credentials);
-
-    con.connect((err) => {
-        if (err) {
-            throw err;
-        }
-    });
-
-    con.query(queries.grades.byID(req.params.id),
-            (err, results, fields) => {
-        if (err) {
-            res.status(500).send();
-
-            return;
-        }
-
-        res.status(200).json(results);
-    });
-
-    con.end();
-})
-// Define all other requests for the route
-.all(badRequest);
-
-// Define the '/grades/' route
-app.route('/grades/')
-// Define the get requests for the route
-.get((req, res) => {
-    let con = mysql.createConnection(credentials);
-
-    con.connect();
-
-    con.query(queries.grades.all(), (err, results, fields) => {
-        if (err) {
-            res.status(500).send();
-
-            return;
-        }
-
-        res.status(200).json(results);
-    });
-
-    con.end();
-})
-// Define all other requests for the route
-.all(badRequest);
-
 // All other routes
 app.route('*')
 // Define get requests to 404
 .get((req, res) => {
     res.status(404).send('Page not Found');
 })
-.all(badRequest);
-
+// Define all other requests for the route to 500
+.all((req, res) => {
+    res.status(400).send('Bad Request');
+});
