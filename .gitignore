@@ -5,7 +5,6 @@ bower_components/
 # vim
 *.swp
 *~
-*.un
 
 # sensitive things
 mysql/credentials.js

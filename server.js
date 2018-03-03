@@ -43,33 +43,51 @@ function badRequest(req, res) {
     res.status(400).send('Bad Request');
 }
 
-// Define the grades route
-app.route('grades/:id')
+// Define the '/grades/:id' route
+app.route('/grades/:id')
 // Define get requests for the route
+.get((req, res) => {
+    let con = mysql.createConnection(credentials);
+
+    con.connect((err) => {
+        if (err) {
+            throw err;
+        }
+    });
+
+    con.query(queries.grades.byID(req.params.id),
+            (err, results, fields) => {
+        if (err) {
+            res.status(500).send();
+
+            return;
+        }
+
+        res.status(200).json(results);
+    });
+
+    con.end();
+})
+// Define all other requests for the route
+.all(badRequest);
+
+// Define the '/grades/' route
+app.route('/grades/')
+// Define the get requests for the route
 .get((req, res) => {
     let con = mysql.createConnection(credentials);
 
     con.connect();
 
-    if (req.params.id) {
-        con.query(queries.grades.byID(req.params.id),
-                (err, results, fields) => {
-            if (err) {
-                res.status(500).send();
-            }
+    con.query(queries.grades.all(), (err, results, fields) => {
+        if (err) {
+            res.status(500).send();
 
-            res.status(200).json(results);
-        });
-    }
-    else {
-        con.query(queries.grades.all(), (err, results, fields) => {
-            if (err) {
-                res.status(500).send();
-            }
+            return;
+        }
 
-            res.status(200).json(results);
-        });
-    }
+        res.status(200).json(results);
+    });
 
     con.end();
 })
