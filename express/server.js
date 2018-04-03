@@ -43,6 +43,14 @@ function badRequest(req, res) {
     res.status(400).send('Bad Request');
 }
 
+// Define the request for the webcomponents
+app.route('/webcomponents.js')
+.get((req, res) => {
+    res.sendFile(path.join(__dirname,
+            '../bower_components/webcomponentsjs/webcomponents-lite.js'));
+})
+.all(badRequest);
+
 // Define the '/grades/:id' route
 app.route('/grades/:id')
 // Define get requests for the route
