@@ -21,13 +21,13 @@ const queries = require('./mysql/queries');
 const app = express();
 const hostname = 'localhost';
 const port = 8080;
-const static_path = path.join(__dirname, 'app');
+const static_path = path.join(__dirname, '../static');
 
 //-------------------
 //- Server Listener -
 //-------------------
 app.listen(port, () => {
-    console.log(`Listening at "${hostname}://${port}"`);
+    console.log(`Listening at "${hostname}:${port}"`);
 });
 
 //--------------------
