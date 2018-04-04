@@ -1,10 +1,14 @@
 module.exports = {
-    grades: {
-        all() {
-            return 'SELECT * FROM Grades';
+    // use `\?` to tell sql to escape the parameter
+    users: {
+        get all() {
+            return 'SELECT * FROM FSA_USERS';
         },
-        byID(id) {
-            return `SELECT * FROM Grades WHERE grade_id=${id}`
+        get byID() {
+            return `SELECT * FROM FSA_USERS WHERE id=\?`;
+        },
+        get byFName() {
+            return 'SELECT * FROM FSA_USERS WHERE firstname=\?';
         }
     }
 }

@@ -8,8 +8,19 @@ if (!('registerElement' in document) ||
 }
 
 CLASH = (function() {
+    function clearArea() {
+        //Clear the page
+        let mainArea = document.querySelector('#mainArea');
+
+        while (mainArea && mainArea.firstChild) {
+            mainArea.removeChild(mainArea.firstChild);
+        }
+    }
+
     function viewOverview() {
         console.log("Calling view overview");
+
+        clearArea();
 
         // grab the current user
         let user_id = window.CLASH.user.id;
@@ -70,6 +81,8 @@ CLASH = (function() {
 
     function viewBuildingList() {
         console.log("Calling view building list");
+
+        clearArea();
 
         // grab the current user
         let user_id = window.CLASH.user.id;

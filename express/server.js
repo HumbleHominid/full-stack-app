@@ -6,7 +6,6 @@ const path = require('path');
 //------------------------
 //- Node Module Requires -
 //------------------------
-const mysql = require('mysql');
 const express = require('express');
 
 //------------------
@@ -14,6 +13,11 @@ const express = require('express');
 //------------------
 const credentials = require('./mysql/credentials');
 const queries = require('./mysql/queries');
+
+//---------------------
+//- Additional Routes -
+//---------------------
+const users = require('./routes/users.js');
 
 //--------------------
 //- Script Constants -
@@ -51,56 +55,8 @@ app.route('/webcomponents.js')
 })
 .all(badRequest);
 
-// Define the '/grades/:id' route
-app.route('/grades/:id')
-// Define get requests for the route
-.get((req, res) => {
-    let con = mysql.createConnection(credentials);
-
-    con.connect((err) => {
-        if (err) {
-            throw err;
-        }
-    });
-
-    con.query(queries.grades.byID(req.params.id),
-            (err, results, fields) => {
-        if (err) {
-            res.status(500).send();
-
-            return;
-        }
-
-        res.status(200).json(results);
-    });
-
-    con.end();
-})
-// Define all other requests for the route
-.all(badRequest);
-
-// Define the '/grades/' route
-app.route('/grades/')
-// Define the get requests for the route
-.get((req, res) => {
-    let con = mysql.createConnection(credentials);
-
-    con.connect();
-
-    con.query(queries.grades.all(), (err, results, fields) => {
-        if (err) {
-            res.status(500).send();
-
-            return;
-        }
-
-        res.status(200).json(results);
-    });
-
-    con.end();
-})
-// Define all other requests for the route
-.all(badRequest);
+// Include the users routes
+app.use(users);
 
 // All other routes
 app.route('*')
