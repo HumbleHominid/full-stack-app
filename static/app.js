@@ -1,3 +1,4 @@
+// uses polyfill if html imports aren't supported
 if (!('registerElement' in document) ||
         !('import' in document.createElement('link')) ||
         !('content' in document.createElement('template'))) {
@@ -8,101 +9,43 @@ if (!('registerElement' in document) ||
 }
 
 CLASH = (function() {
+    // Clears the page
     function clearArea() {
-        //Clear the page
         let mainArea = document.querySelector('#mainArea');
 
-        while (mainArea && mainArea.firstChild) {
+        while (mainArea.firstChild) {
             mainArea.removeChild(mainArea.firstChild);
         }
     }
 
-    function viewOverview() {
-        console.log("Calling view overview");
-
+    function reqUsers(endpoint, title) {
         clearArea();
 
-        // grab the current user
-        let user_id = window.CLASH.user.id;
-
-        if (!user_id) {
-            console.log("There is no logged in user");
-
-            return;
-        }
-
-        // This is assuming you are using jquery
-        // send an ajax request to api/overview/:user_id
-        $.ajax('api/overview', {
-            data: user_id, // this is appended to the url
-        })
+        $.ajax(endpoint)
         // if you succeed
-        .done((data) => {
-            console.log('Success');
-        })
-        // if you fail
-        .fail(() => {
-            console.log('Mission failed');
+        .done((res) => {
+            let mainArea = document.querySelector('#mainArea')
+            let users = document.querySelector('#users');
+            let clonedUsers = users.cloneNode(true);
+            let tableBody = clonedUsers.querySelector('tbody');
 
-            let data = {
-                troopNum: 420,
-                spellNum: 69,
-                townHallLevel: 50
-            }
+            for (let user of res) {
+                // make tr
+                let row = document.createElement('tr');
 
-            let el = document.querySelector('#mainArea #overview');
+                for (let column in user) {
+                    let entry = document.createElement('td');
 
-            if (!el) {
-                document.querySelector('#mainArea').appendChild(document.querySelector('#overview').cloneNode(true));
-
-                el = document.querySelector('#mainArea #overview');
-            }
-
-            el.querySelector('#troopNum').innerHTML = data.troopNum;
-            el.querySelector('#spellNum').innerHTML = data.spellNum;
-            el.querySelector('#townHallLevel').innerHTML = data.townHallLevel;
-
-            el.querySelector('#upgradeTownHall').onclick = function() {
-                console.log('upgrading')
-
-                let townHallEl = el.querySelector('#townHallLevel');
-                let currentLevel = townHallEl.innerHTML;
-
-                if (!parseInt(currentLevel)) {
-                    console.log('no num');
-
-                    return;
+                    entry.innerHTML = user[column];
+                    row.appendChild(entry);
                 }
 
-                townHallEl.innerHTML = parseInt(currentLevel) + 1;
+                tableBody.appendChild(row);
             }
-        });
-    }
 
-    function viewBuildingList() {
-        console.log("Calling view building list");
+            clonedUsers.querySelector('h2').innerHTML = title;
 
-        clearArea();
-
-        // grab the current user
-        let user_id = window.CLASH.user.id;
-
-        if (!user_id) {
-            console.log("There is no logged in user");
-
-            return;
-        }
-
-        // This is assuming you are using jquery
-        // send an ajax request to /overview/:user_id
-        $.ajax('api/buildinglist.json',
-        {
-            dataType: "json"
-        })
-        // if you succeed
-        .done((data) => {
-            console.log('Success');
-            console.log(JSON.stringify(data));
+            mainArea.appendChild(clonedUsers);
         })
         // if you fail
         .fail(() => {
@@ -110,16 +53,22 @@ CLASH = (function() {
         });
     }
 
-    function login() {
-        console.log('Logging in');
+    function viewUsers() {
+        reqUsers('users', 'View All Users');
+    }
 
-        window.CLASH.user.id = 420;
+    function viewUsersWithId3() {
+        reqUsers('users/byID/3', 'View Users With ID 3');
+    }
+
+    function listUsersNamedMichael() {
+        reqUsers('users/byFName/michael', 'View Users Named Michael');
     }
 
     // bind events
-    document.querySelector('#viewOverview').onclick = viewOverview;
-    document.querySelector('#viewBuildingList').onclick = viewBuildingList;
-    document.querySelector('#loginBtn').onclick = login;
+    document.querySelector('#listUsers').onclick = viewUsers;
+    document.querySelector('#listUsersWithID3').onclick = viewUsersWithId3;
+    document.querySelector('#listUsersNamedMichael').onclick = listUsersNamedMichael;
 
     return {
         user: {
