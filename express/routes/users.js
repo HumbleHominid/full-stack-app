@@ -75,7 +75,7 @@ router.route('/users/byFName/:fName')
 .all(badRequest);
 
 // Define the 'users' route
-router.route('/users')
+router.route('/users/all')
 // Define the get requests for the route
 .get((req, res) => {
     handleQuery(req, res, queries.users.all);

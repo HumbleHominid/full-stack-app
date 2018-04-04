@@ -54,7 +54,7 @@ CLASH = (function() {
     }
 
     function viewUsers() {
-        reqUsers('users', 'View All Users');
+        reqUsers('users/all', 'View All Users');
     }
 
     function viewUsersWithId3() {
