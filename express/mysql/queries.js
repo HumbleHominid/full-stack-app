@@ -10,5 +10,10 @@ module.exports = {
         get byFName() {
             return 'SELECT * FROM FSA_USERS WHERE firstname=\?';
         }
+    },
+    login: {
+        get login() {
+            return 'SELECT * FROM FSA_USERS WHERE username=\? AND password=\?'
+        }
     }
 }

@@ -8,12 +8,6 @@ const path = require('path');
 //------------------------
 const express = require('express');
 
-//------------------
-//- Local Requires -
-//------------------
-const credentials = require('./mysql/credentials');
-const queries = require('./mysql/queries');
-
 //---------------------
 //- Additional Routes -
 //---------------------
